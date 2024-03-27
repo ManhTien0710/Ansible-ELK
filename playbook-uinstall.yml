@@ -1,0 +1,24 @@
+- name: Uninstall Elasticsearch cluster - Kibana
+  hosts:
+    - elasticsearch_nodes
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: "[Uninstall] - Disable service before remove"
+      shell: "if systemctl is-enabled --quiet {{ item }}; then systemctl disable {{ item }} && echo disable_ok ; fi"
+      register: output
+      changed_when: "'disable_ok' in output.stdout"
+      loop:
+        - elasticsearch
+        - kibana
+
+    - name: "[Uninstall] - Purge ELK packages"
+      shell: "sudo yum remove -y elasticsearch kibana"
+      ignore_errors: yes
+
+    - name: "[Uninstall] - Delete ELK directories"
+      shell: "rm -rf /usr/share/{{ item }}/ /etc/{{ item }}/ /var/lib/{{ item }}/ /var/log/{{ item }}/"
+      loop:
+        - elasticsearch
+        - kibana

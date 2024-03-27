@@ -1,0 +1,32 @@
+#host
+host1: "172.16.10.20"
+host2: "172.16.10.28"
+host3: "172.16.10.29"
+
+# ElasticSearch
+es_config_file: /etc/elasticsearch/elasticsearch.yml
+es_data: /var/lib/elasticsearch/data
+es_log: /var/log/elasticsearch
+
+es_usr: "/usr/share/elasticsearch"
+es_conf: "/etc/elasticsearch"
+es_pid: "/var/run/elasticsearch"
+es_data_dir: "/var/lib/elasticsearch"
+
+es_name: "elasticsearch"
+es_version: "8.7.0-x86_64"
+cluster_name: "elasticsearch_cluster"
+master_node: "172.16.10.20"
+es_port: 9200
+
+node_name_node1: "node1"
+node_name_node2: "node2"
+node_name_node3: "node3"
+
+# Kibana
+
+kbn_config_file: /etc/kibana/kibana.yml
+kbn_log: /var/log/kibana
+kbn_name: "kibana"
+kbn_version: "8.7.0-x86_64"
+kbn_port: 5601

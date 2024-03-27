@@ -1,0 +1,114 @@
+- name: Install and configure Elasticsearch cluster
+  hosts:
+    - elasticsearch_nodes
+  become: true
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Update the server and install epel-release package
+      yum:
+        name: epel-release
+        state: present
+        update_cache: yes
+
+    - name: Install OpenJDK 1.8
+      yum:
+        name: java-1.8.0-openjdk
+        state: present
+        update_cache: yes
+
+    - name: Install wget
+      yum:
+        name: wget
+        state: present
+        update_cache: yes
+
+    - name: Dowload rpm ElasticSearch
+      become: true
+      become_method: sudo
+      shell: wget https://artifacts.elastic.co/downloads/elasticsearch/{{es_name}}-{{es_version}}.rpm -P /root
+    
+    - name: Install ElasticSearch
+      become: true
+      become_method: sudo
+      yum:
+        name: /root/{{es_name}}-{{es_version}}.rpm
+        state: present
+
+    - name: Generate Elasticsearch configuration file on node1
+      template:
+        src: elasticsearch.yml.j2
+        dest: "{{ es_config_file }}"
+        owner: elasticsearch
+        group: elasticsearch
+        mode: '0644'
+      delegate_to: node1
+      vars:
+        node_name: "{{ node_name_node1 }}"
+
+    - name: Generate Elasticsearch configuration file on node2
+      template:
+        src: elasticsearch.yml.j2
+        dest: "{{ es_config_file }}"
+        owner: elasticsearch
+        group: elasticsearch
+        mode: '0644'
+      delegate_to: node2
+      vars:
+        node_name: "{{ node_name_node2 }}"
+
+    - name: Generate Elasticsearch configuration file on node3
+      template:
+        src: elasticsearch.yml.j2
+        dest: "{{ es_config_file }}"
+        owner: elasticsearch
+        group: elasticsearch
+        mode: '0644'
+      delegate_to: node3
+      vars:
+        node_name: "{{ node_name_node3 }}"
+ 
+    - name: Dowload rpm kibana
+      become: true
+      become_method: sudo
+      shell: wget https://artifacts.elastic.co/downloads/kibana/{{kbn_name}}-{{kbn_version}}.rpm -P /root
+    
+    - name: Install Kibana
+      become: true
+      become_method: sudo
+      yum:
+        name: /root/{{kbn_name}}-{{kbn_version}}.rpm
+        state: present
+
+    - name: Generate kibana configuration file on node1
+      template:
+        src: kibana.yml.j2
+        dest: "{{ kbn_config_file }}"
+        owner: kibana
+        group: kibana
+        mode: '0644'
+      delegate_to: node1
+
+    - name: Start Elasticsearch service
+      service:
+        name: elasticsearch
+        state: started
+        enabled: yes
+    
+    - name: Start kibana service
+      service:
+        name: kibana
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Restart Elasticsearch service
+      service:
+        name: elasticsearch
+        state: restarted
+    
+    - name: Restart kibana service
+      service:
+        name: kibana
+        state: restarted
+

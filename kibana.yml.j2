@@ -1,0 +1,15 @@
+server.port: {{kbn_port}}
+server.host: "{{host1}}"
+elasticsearch.hosts: ["http://{{host1}}", "http://{{host2}}", "http://{{host3}}"]
+logging:
+  appenders:
+    file:
+      type: file
+      fileName: {{kbn_log}}/kibana.log
+      layout:
+        type: json
+  root:
+    appenders:
+      - default
+      - file
+pid.file: /run/kibana/kibana.pid

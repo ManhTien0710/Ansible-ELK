@@ -1,0 +1,11 @@
+cluster.name: {{cluster_name}}
+node.name: {{ node_name }}
+path.data: {{es_data}}
+path.logs: {{es_log}}
+network.host: 0.0.0.0
+http.port: {{es_port}}
+discovery.seed_hosts: ["{{host1}}", "{{host2}}", "{{host3}}"]
+cluster.initial_master_nodes: ["{{master_node}}"]
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false
